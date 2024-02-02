@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	<form onsubmit="handleFormSubmit(event)">
+		<label for="username">Username</label>
+		<input type="text" name="username" id="username" />
+		<label for="email">Email</label>
+		<input type="email" name="email" id="email" />
+		<label for="phone">Phone No</label>
+		<input type="tel" name="phone" id="phone" />
+		<button type="submit">Submit</button>
+	  </form>
+	  <ul  id="userlist"></ul>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+
+<script>
+
+function handleFormSubmit(event){
+event.preventDefault();
+
+const username=event.target.username.value;
+console.log(username);
+const email=event.target.email.value;
+const phone=event.target.phone.value;
+
+const user={
+	name:username,
+	email:email,
+	number:phone,
+}
+
+	axios.post("https://crudcrud.com/api/c0a0fcc213f440b1bcd2f9c0f0b93abd/appointmentData",user)
+	.then((res)=>{console.log(res)
+	})
+	.catch((err)=>{
+		console.log(err)
+	})
+
+
+
+// const stringusers=JSON.stringify(user);
+// localStorage.setItem(user.email,stringusers);
+displayUsers(user);
+}
+
+//display
+function displayUsers(user) {
+
+const userlist=document.getElementById('userlist');
+
+const listitem=document.createElement('li');
+listitem.textContent=user.name+" "+ user.email+" " +user.number;
+
+const deletebtn=document.createElement('input');
+deletebtn.type="button";
+deletebtn.value='Delete';
+
+const editbtn=document.createElement('input');
+editbtn.type='button';
+editbtn.value='Edit';
+
+deletebtn.onclick=()=>{
+	localStorage.removeItem(user.email);
+	userlist.removeChild(listitem);
+	
+}
+editbtn.onclick=()=>{
+
+	
+	// Populate the input fields with existing values
+	document.getElementById('username').value = user.name;
+      document.getElementById('email').value = user.email;
+      document.getElementById('phone').value = user.number;
+	localStorage.removeItem(user.email);
+	userlist.removeChild(listitem);
+				
+	
+}
+
+
+listitem.appendChild(deletebtn);
+listitem.appendChild(editbtn);
+userlist.appendChild(listitem);
+}
+</script>
+</html>
