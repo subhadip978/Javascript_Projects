@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	<form onsubmit="handleFormSubmit(event)">
+		<label for="username">Username</label>
+		<input type="text" name="username" id="username" />
+		<label for="email">Email</label>
+		<input type="email" name="email" id="email" />
+		<label for="phone">Phone No</label>
+		<input type="tel" name="phone" id="phone" />
+		<button type="submit">Submit</button>
+	  </form>
+	  <ul  id="userlist"></ul>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+<script>
+	
+//task when we refresh the page data will not lost
+	function handleFormSubmit(event){
+		event.preventDefault();
+
+		const username=event.target.username.value;
+		const email= event.target.email.value;
+		const phone=event.target.phone.value;
+
+		const userdetails={
+			name:username,
+			email:email,
+			phone:phone
+		}
+
+
+		// localStorage.setItem(userdetails.email,JSON.stringify(userdetails))
+
+		axios.post("https://crudcrud.com/api/3e73ae8b7d5542ec84fefdc3a305e50e/appointmentData",userdetails)
+		.then((res)=>{
+			console.log(res);
+		})
+		.catch((err)=>{
+			console.log(err);
+		})
+		displayuser(userdetails);
+
+	}
+
+
+	window.addEventListener("DOMContentLoaded",()=>{
+		axios.get("https://crudcrud.com/api/3e73ae8b7d5542ec84fefdc3a305e50e/appointmentData")
+		.then((res)=>{
+			console.log(res);
+			res.data.forEach(item=>{
+				displayuser(item);
+		})
+
+		
+	})
+
+.catch((err)=>{
+	console.log(err);
+
+
+})
+		
+	})
+
+	function displayuser(userdetails){
+		const userlist=document.getElementById("userlist");
+		const listitem=document.createElement("li");
+		listitem.textContent=userdetails.name +" "+ userdetails.email+" "+ userdetails.phone ;
+
+
+		//delete button
+
+		const deletebtn=document.createElement("input");
+		deletebtn.type="button";
+		deletebtn.value="DELETE";
+
+		deletebtn.onclick=()=>{
+			userlist.removeChild(listitem);
+			localStorage.removeItem(userdetails.email);
+		}
+
+
+		//edit button
+
+		const editbtn=document.createElement("input");
+		editbtn.type="button";
+		editbtn.value='EDIT';
+
+		editbtn.onclick=()=>{
+
+			document.getElementById("username").value=userdetails.name;
+			document.getElementById("email").value=userdetails.email;
+			document.getElementById("phone").value=userdetails.phone;
+		}
+
+
+		listitem.appendChild(deletebtn);
+		listitem.appendChild(editbtn);
+		userlist.appendChild(listitem);
+
+
+	}
+
+
+
+</script>
+</html>
